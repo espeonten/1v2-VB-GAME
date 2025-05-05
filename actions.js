@@ -3,12 +3,14 @@ function action(sprite, sprite2){
         ball.x = p.x+30
         ball.y = p.y+20
         if(keyDown("space")){
+            ball.y = height/1.25
             pAction = "serve"
         }
     }
     else if(pAction == "serve"){
         if(keyDown("right")){
-            ball.velocityX = 2
+            jumpServe = true
+            ball.velocityX = 2 
             ball.velocityY = -15
         }
         else{
@@ -37,20 +39,41 @@ function action(sprite, sprite2){
                 else if(keyDown("space")){
                     lastPAction = "spike"
                     p.changeAnimation("swing")
-                    if(p.x > sprite.x){
-                        ball.velocityX= 50
-                        ball.velocityY = 30
-                        lastPersonWhoHitTheBall = "p"
-                    }
-                    else if(p.x < sprite.x && p.x > sprite2.x){
-                        ball.velocityX= 35
-                        ball.velocityY = 18
-                        lastPersonWhoHitTheBall = "p"
-                    }
-                    else if(p.x < sprite2.x && p.x < sprite.x){
-                        ball.velocityX= 30
-                        ball.velocityY = 5
-                        lastPersonWhoHitTheBall = "p"
+                    if(jumpServe != true){
+                        if(p.x > sprite.x){
+                            ball.velocityX= 50
+                            ball.velocityY = 30
+                            lastPersonWhoHitTheBall = "p"
+                        }
+                        else if(p.x < sprite.x && p.x > sprite2.x){
+                            ball.velocityX= 35
+                            ball.velocityY = 18
+                            lastPersonWhoHitTheBall = "p"
+                        }
+                        else if(p.x < sprite2.x && p.x < sprite.x){
+                            ball.velocityX= 30
+                            ball.velocityY = 5
+                            lastPersonWhoHitTheBall = "p"
+                        }}
+                    else if(jumpServe == true){
+                        if(p.x > sprite.x){
+                            ball.velocityX= 100
+                            ball.velocityY = 70
+                            lastPersonWhoHitTheBall = "p"
+                            jumpServe = false
+                        }
+                        else if(p.x < sprite.x && p.x > sprite2.x){
+                            ball.velocityX= 80
+                            ball.velocityY = 50
+                            lastPersonWhoHitTheBall = "p"
+                            jumpServe = false
+                        }
+                        else if(p.x < sprite2.x && p.x < sprite.x){
+                            ball.velocityX= 40
+                            ball.velocityY = 10
+                            lastPersonWhoHitTheBall = "p"
+                            jumpServe = false
+                        }
                     }
                 }
                 else if(keyDown("down")){
@@ -62,11 +85,13 @@ function action(sprite, sprite2){
                 else if(keyDown("z")){
                     if(keyDown("right")){
                         if(keyDown("up")){
-                            ball.velocityX = 4.5
-                            ball.velocityY = -15
+                            ball.velocityX = 13
+                            ball.velocityY = -7.5
                         }
-                        ball.velocityX = 2
-                        ball.velocityY = -15
+                        else{
+                            ball.velocityX = 2
+                            ball.velocityY = -15
+                        } 
                     }
                     else{
                         ball.velocityX = 0
@@ -74,8 +99,9 @@ function action(sprite, sprite2){
                     }
                 }
                 else if(keyDown("x")){
-                    ball.velocityX= 40
-                    ball.velocityY= 60
+                    p.changeAnimation("swing")
+                    ball.velocityX= 3.7
+                    ball.velocityY= -5.7
                 }
                 touches += 1
             }
