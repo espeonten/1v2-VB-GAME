@@ -1,4 +1,4 @@
-var p, pI, pJI, pSI, pBI, pSetI, pFI
+var p, pI, pJI, pSI, pBI, pSetI, pFI, pFSetI, pRI
 var opp, oppI, oppSI
 var blocker
 var net
@@ -15,7 +15,11 @@ var gamestate = "play"
 var deciderForSpike, deciderForSpike2
 var netEdge
 var tooHard = false
-var deflected = Math.random(0, 1)
+var jumpServe = false
+var canRun = true
+var timer = 0
+var speed = 15
+
 
 
 function preload() {
@@ -24,7 +28,9 @@ function preload() {
     pSI = loadAnimation("p-swing.png")
     pBI = loadAnimation("p-bump.png")
     pSetI = loadAnimation("p-set.png")
+    pFSetI = loadAnimation("p-forward-set.png")
     pFI = loadAnimation("p-bump.png", "p-floss.png")
+    pRI = loadAnimation("p-run-1.png", "p.png", "p-run-2.png")
 
     oppI = loadAnimation("opp.png")
     oppSI = loadAnimation("opp-surprised.png")
@@ -54,7 +60,9 @@ function setup() {
     p.addAnimation("swing", pSI)
     p.addAnimation("bump", pBI)
     p.addAnimation("set", pSetI)
+    p.addAnimation("forward-set", pFSetI)
     p.addAnimation("dance", pFI)
+    p.addAnimation("run", pRI)
     p.changeAnimation("reg")
 
     opp = createSprite(width/1.2, height/1.1)
@@ -90,6 +98,8 @@ function draw() {
     deciderForSpike.visible = false
     deciderForSpike2.visible = false
 
+    console.log(canRun)
+    
     
     if(gamestate == "play"){
         restartB.visible = false
@@ -105,11 +115,28 @@ function draw() {
         opp.velocityY+= 0.3
         blocker.velocityY+= 0.3
 
-        deflected = Math.random(0, 1)
+
+        console.log(timer, speed)
+        if(frameCount % 30 == 0 && pAction == "play") {
+            timer += 1
+        }
 
         if(p.y >= 900){
+            canRun = true
             p.changeAnimation("reg")
         }
+        else{
+            canRun = false
+            p.changeAnimation("jump")
+        }
+
+        if(keyDown("left") && canRun == true){
+            p.changeAnimation("run")
+        }
+        else if(keyDown("right") && canRun == true){
+            p.changeAnimation("run")
+        }
+
         if(keyDown("up") && p.collide(edges)){
             p.changeAnimation("jump")
             p.velocityY= -15
@@ -136,22 +163,48 @@ function draw() {
         if(keyDown("g")){
             p.changeAnimation("dance")
         }
+        if(keyDown("x")){
+            p.changeAnimation("swing")
+        }
+        if(keyDown("right") && keyDown("up") && keyDown("z")){
+            p.changeAnimation("forward-set")
+        }
 
         if(pAction == "play" && ball.x >= invisibleWall.x + 100){
             if(ball.x > opp.x){
-                opp.velocityX= 15
+                opp.velocityX= speed
             }
             if(ball.x < opp.x){
-                opp.velocityX= -15
+                opp.velocityX= -speed
             }
-        
 
             if(pAction != "readyingForServe"){
                 ball.velocityY+=0.3
             }
         }
         else{
-            opp.x = width/1.35
+            opp.x = width/1.2
+        }
+
+        if(timer == 10){
+            speed = 14
+            timer = 11
+        }
+        else if(timer == 20){
+            speed = 13
+            timer = 21
+        }
+        else if(timer == 30){
+            speed = 12
+            timer = 31
+        }
+        else if(timer == 40){
+            speed = 11
+            timer = 41
+        }
+        else if(timer == 50){
+            speed = 10
+            timer = 51
         }
 
         if(ball.isTouching(opp)){
@@ -247,9 +300,13 @@ function draw() {
         net.visible = false
         netEdge.visible = false
         invisibleWall.visible = false
+        speed = 15
         p.y = height/ 1.1
         opp.y = height/ 1.1
         blocker.y = height/ 1.1
+
+        timer = 0
+
         if(winner == "p"){
             background("green")
             textSize(50)
